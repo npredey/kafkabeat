@@ -42,7 +42,7 @@ func New() *Kafkabeat {
 /// *** Beater interface methods ***///
 
 func (bt *Kafkabeat) Config(b *beat.Beat) error {
-
+        fmt.Println("Reading Config")
 	// Load beater beatConfig
 	logp.Info("Configuring Kafkabeat...")
 	var err error
@@ -55,7 +55,13 @@ func (bt *Kafkabeat) Config(b *beat.Beat) error {
 	if bt.zookeepers == nil || len(bt.zookeepers) == 0 {
 		return KafkabeatError{"Atleast one zookeeper must be defined"}
 	}
-	zClient,err = kazoo.NewKazoo(bt.zookeepers,nil)
+	chroot := bt.beatConfig.Kafkabeat.Chroot
+	var kazooConfig *kazoo.Config
+	if chroot != "" {
+		defaultConfig := kazoo.NewConfig()
+		kazooConfig = &kazoo.Config{Chroot: chroot, Timeout: defaultConfig.Timeout, Logger: defaultConfig.Logger}
+	}
+	zClient,err = kazoo.NewKazoo(bt.zookeepers, kazooConfig)
 	if err != nil {
 		logp.Err("Unable to connect to Zookeeper")
 		return err
@@ -70,7 +76,11 @@ func (bt *Kafkabeat) Config(b *beat.Beat) error {
 	}
 	logp.Info("Brokers: %v",bt.brokers)
 	client,err = sarama.NewClient(bt.brokers,sarama.NewConfig())
-
+	groups, _ := zClient.Consumergroups()
+	fmt.Println(groups)
+	//topics := []string{"test"}
+	//consumer := zClient.Consumergroup("test-consumer-group").NewInstance()
+	//consumer.Register(topics)
 	// Setting default period if not set
 	if bt.beatConfig.Kafkabeat.Period == "" {
 		bt.beatConfig.Kafkabeat.Period = "1s"
@@ -91,6 +101,7 @@ func (bt *Kafkabeat) Config(b *beat.Beat) error {
 	}
 	logp.Info("Monitoring topics: %v",bt.topics)
 	bt.groups = bt.beatConfig.Kafkabeat.Groups
+
 	if bt.groups == nil {
 		bt.groups,err = getGroups()
 	}

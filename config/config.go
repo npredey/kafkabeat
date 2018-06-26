@@ -12,4 +12,5 @@ type KafkabeatConfig struct {
 	Groups [] string `yaml:"groups"`
 	Topics [] string `yaml:"topics"`
 	Zookeepers [] string `yaml:"zookeepers"`
+	Chroot string `yaml:"chroot"`
 }
