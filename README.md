@@ -3,7 +3,7 @@
 Welcome to Kafkabeat.
 
 Ensure that this folder is at the following location:
-`${GOPATH}/github.com/gingerwizard`
+`${GOPATH}/github.com/kafkabeat`
 
 ## Getting Started with Kafkabeat
 
@@ -112,9 +112,9 @@ make clean
 To clone Kafkabeat from the git repository, run the following commands:
 
 ```
-mkdir -p ${GOPATH}/github.com/gingerwizard
-cd ${GOPATH}/github.com/gingerwizard
-git clone https://github.com/gingerwizard/kafkabeat
+mkdir -p ${GOPATH}/github.com/kafkabeat
+cd ${GOPATH}/github.com/kafkabeat
+git clone https://github.com/npredey/kafkabeat
 ```
 
 
